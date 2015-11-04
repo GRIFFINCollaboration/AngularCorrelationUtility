@@ -130,7 +130,7 @@
         {
             j2 = 1;
             document.getElementById("j2").value = 1*1;
-	    document.getElementById("error1").innerHTML = "No 0 to 0 transitions allowed. Setting J2 to 1";
+	    alert("No 0 to 0 transitions allowed. Setting J2 to 1");
         }
      };
 
@@ -402,4 +402,76 @@
       var out;
       out = (1/(1+Math.pow(delta,2)))*(  F(k,jf,L1,L1,ji)+(Math.pow((-1),((L1+L2))))*2*delta*F(k,jf,L1,L2,ji)+delta*delta*F(k,jf,L2,L2,ji) );
       return out;
+    };
+
+    function evenA()
+    {
+        // spin 1
+	var spin1options = "<select id=\"j1\" onchange=\"check_jvalues();recalculate_l1values();recalculate();\">\n";
+        for (var i = 0;i<10;i++)
+        {
+		spin1options = spin1options+"<option value="+i+">"+i+"</option>\n";
+        }
+	spin1options = spin1options+"</select>\n";
+	document.getElementById("spin1").innerHTML = spin1options;
+        document.getElementById("j1").value = 4;
+
+	// spin 2
+	var spin2options = "<select id=\"j2\" onchange=\"check_jvalues();recalculate_l1values();recalculate_l2values();recalculate();\">\n";
+        for (var i = 0;i<10;i++)
+        {
+		spin2options = spin2options+"<option value="+i+">"+i+"</option>\n";
+        }
+	spin2options = spin2options+"</select>\n";
+	document.getElementById("spin2").innerHTML = spin2options;
+        document.getElementById("j2").value = 2;
+
+	// spin 3
+	var spin3options = "<select id=\"j3\" onchange=\"check_jvalues();recalculate_l2values();recalculate();\">\n";
+        for (var i = 0;i<10;i++)
+        {
+		spin3options = spin3options+"<option value="+i+">"+i+"</option>\n";
+        }
+	spin3options = spin3options+"</select>\n";
+	document.getElementById("spin3").innerHTML = spin3options;
+        document.getElementById("j3").value = 0;
+    };
+
+    function oddA()
+    {
+        // spin 1
+	var spin1options = "<select id=\"j1\" onchange=\"check_jvalues();recalculate_l1values();recalculate();\">\n";
+        for (var i = 0;i<10;i++)
+        {
+		var value = (2*i+1)/2;
+		var numerator = 2*i+1;
+		spin1options = spin1options+"<option value="+value+">"+numerator+"/2</option>\n";
+        }
+	spin1options = spin1options+"</select>\n";
+	document.getElementById("spin1").innerHTML = spin1options;
+        document.getElementById("j1").value = 2.5;
+
+	// spin 2
+	var spin2options = "<select id=\"j2\" onchange=\"check_jvalues();recalculate_l1values();recalculate_l2values();recalculate();\">\n";
+        for (var i = 0;i<10;i++)
+        {
+		var value = (2*i+1)/2;
+		var numerator = 2*i+1;
+		spin2options = spin2options+"<option value="+value+">"+numerator+"/2</option>\n";
+        }
+	spin2options = spin2options+"</select>\n";
+	document.getElementById("spin2").innerHTML = spin2options;
+        document.getElementById("j2").value = 1.5;
+
+	// spin 3
+	var spin3options = "<select id=\"j3\" onchange=\"check_jvalues();recalculate_l2values();recalculate();\">\n";
+        for (var i = 0;i<10;i++)
+        {
+		var value = (2*i+1)/2;
+		var numerator = 2*i+1;
+		spin3options = spin3options+"<option value="+value+">"+numerator+"/2</option>\n";
+        }
+	spin3options = spin3options+"</select>\n";
+	document.getElementById("spin3").innerHTML = spin3options;
+        document.getElementById("j3").value = 0.5;
     };
