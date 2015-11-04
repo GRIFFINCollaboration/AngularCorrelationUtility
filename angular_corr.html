@@ -183,7 +183,7 @@
             <label for="a2" class="right inline"><b>a<sub>2</sub>:</b></label>
           </div>
           <div class="small-8 columns">
-            <input type="text" id="a2" value="1" onchange="plot();">
+            <input type="number" id="a2" step="0.001" onchange="plot();">
           </div>
         </div>
         <div class="row">
@@ -191,7 +191,7 @@
             <label for="a4" class="right inline"><b>a<sub>4</sub>:</b></label>
           </div>
           <div class="small-8 columns">
-            <input type="text" id="a4" value="1" onchange="plot();">
+            <input type="number" id="a4" step="0.001" onchange="plot();">
           </div>
         </div>
       </div>
@@ -217,9 +217,10 @@ $(document).foundation({
   slider: {
     on_change: function(){
       recalculate();
-    }
-  }
+    };
+  };
 });
 </script>
+
 </body>
 </html>
