@@ -136,7 +136,6 @@
 
      function recalculate()
      {
-	alert("Running recalculate!");
 	var j1 = document.getElementById("j1").value*1;
 	var j2 = document.getElementById("j2").value*1;
 	var j3 = document.getElementById("j3").value*1;
