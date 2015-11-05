@@ -77,7 +77,7 @@
             <label class="right inline"><b>Mixing ratio (L<sub>1a</sub>/L<sub>1b</sub>):</b></label>
           </div>
           <div class="small-7 columns">
-            <div class="range-slider" id="delta1-slider" data-slider data-options="display_selector: #delta1; initial: 0; start: -1; end: 1; step: 0.01;">
+            <div class="range-slider" id="delta1-slider" data-slider data-options="display_selector: #delta1; initial: 0; start: -1; end: 1; step: 0.01;" onchange="recalculate();">
               <span class="range-slider-handle" role="slider" tabindex="0"></span>
               <span class="range-slider-active-segment"></span>
             </div>
@@ -140,7 +140,7 @@
             <label class="right inline"><b>Mixing ratio (L<sub>2a</sub>/L<sub>2b</sub>):</b></label>
           </div>
           <div class="small-7 columns">
-            <div class="range-slider" id="delta2-slider" data-slider data-options="display_selector: #delta2; initial: 0; start: -1; end: 1; step: 0.01;">
+            <div class="range-slider" id="delta2-slider" data-slider data-options="display_selector: #delta2; initial: 0; start: -1; end: 1; step: 0.01;" onchange="recalculate();">
               <span class="range-slider-handle" role="slider" tabindex="0"></span>
               <span class="range-slider-active-segment"></span>
             </div>
@@ -216,7 +216,6 @@
 $(document).foundation({
   slider: {
     on_change: function(){
-      recalculate();
     }
   }
 });
