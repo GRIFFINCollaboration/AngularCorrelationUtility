@@ -148,8 +148,37 @@
 	var d1 = $('#delta1-slider').attr('data-slider');
 	var d2 = $('#delta2-slider').attr('data-slider');
 
-	document.getElementById("a2").value = calculate_a2(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2).toFixed(3);
-	document.getElementById("a4").value = calculate_a4(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2).toFixed(3);
+	if (l1a==l1b)
+	{
+		if (d1!=0)
+		{
+			d1 = 0;
+			$('.range-slider').foundation('delta1-slider', 'set_value', d1);
+			alert("can't have mixing; only multipolarity selected is "+l1a);
+		}
+		$('#delta1-slider').addClass('disabled');
+	}
+	else
+	{
+		$('#delta1-slider').removeClass('disabled');
+	}
+	if (l2a==l2b)
+	{
+		if (d2!=0)
+		{
+			d2 = 0;
+			$('#delta2-slider').foundation('slider', 'set_value', d2);
+			alert("Can't have mixing; only multipolarity selected is "+l2a);
+		}
+		$('#delta2-slider').addClass('disabled');
+	}
+	else
+	{
+		$('#delta2-slider').removeClass('disabled');
+	}
+
+	document.getElementById("a2").value = calculate_a2(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2);
+	document.getElementById("a4").value = calculate_a4(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2);
 
 	plot();
      };
