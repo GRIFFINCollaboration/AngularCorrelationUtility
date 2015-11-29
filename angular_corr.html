@@ -1,225 +1,223 @@
 <html>
-<head>
-<script type="text/javascript" src="js/dygraphs/dygraph-combined-dev.js"></script>
-<script src="js/vendor/modernizr.js"></script>
-<link rel="stylesheet" href="css/foundation/foundation.css">
-<script type="text/javascript" src = "js/angular_corr.js"></script>
-</head>
-<body>
-<script src="js/vendor/jquery.js"></script>
-<script src="js/vendor/fastclick.js"></script>
-<script type="text/javascript" src="js/foundation.min.js"></script>
+    <head>
+        <script type="text/javascript" src="js/dygraphs/dygraph-combined-dev.js"></script>
+        <script src="js/vendor/modernizr.js"></script>
+        <link rel="stylesheet" href="css/foundation/foundation.css">
+        <script type="text/javascript" src = "js/angular_corr.js"></script>
+    </head>
+    <body>
+        <script src="js/vendor/jquery.js"></script>
+        <script src="js/vendor/fastclick.js"></script>
+        <script type="text/javascript" src="js/foundation.min.js"></script>
 
-<form>
+        <form>
+            <div class="row">
+                <table style="width:100%">
+                    <!-- Odd A or Even A buttons -->
+                    <tr>
+                        <center>
+                            <ul id="evenodd" class="button-group radius toggle" data-toggle="buttons-radius">
+                                <li>
+                                    <input type="radio" id="even" name="r-group" data-toggle="button" onchange="evenA();recalculate_l1values();recalculate_l2values();recalculate();">
+                                    <label class="button" for="even">Even mass</label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="odd" name="r-group" data-toggle="button" onchange="oddA();recalculate_l1values();recalculate_l2values();recalculate();">
+                                    <label class="button" for="odd">Odd mass</label>
+                                </li>
+                            </ul>
+                        </center> 
+                    </tr>
+                    <!-- First state spin -->
+                    <tr>
+                        <td>
+                            <center>
+                                <img src="images/level.png">
+                            </center>
+                        </td>
+                        <td>
+                            <div class="small-2 columns">
+                                <div class="row">
+                                    <div class="small-3 columns">
+                                        <label for="j1" class="right inline"><b>J<sub>1</sub>:</b></label>
+                                    </div>
+                                    <div id="spin1" class="small-8 columns"></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- First transition -->
+                    <tr>
+                        <td>
+                            <center>
+                                <img src="images/gamma.png">
+                            </center>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="small-1 columns">
+                                    <label class="right">L<sub>1a</sub>:</label>
+                                </div>
+                                <div class="small-11 columns">
+                                    <p id="l1a_value"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="small-1 columns">
+                                    <label class="right">L<sub>1b</sub>: </label>
+                                </div>
+                                <div class="small-11 columns">
+                                    <p id="l1b_value"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="small-3 columns">
+                                    <label class="right inline"><b>Mixing ratio (L<sub>1b</sub>/L<sub>1a</sub>):</b></label>
+                                </div>
+                                <div class="small-7 columns">
+                                    <div class="range-slider" id="delta1-slider" data-slider data-options="display_selector: #delta1; initial: 0; start: -1; end: 1; step: 0.01;" onchange="recalculate();">
+                                        <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                                        <span class="range-slider-active-segment"></span>
+                                    </div>
+                                </div>
+                                <div class="small-2 columns">
+                                    <input type="number" id="delta1" min="-1" max="1" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Second state spin -->
+                    <tr>
+                        <td>
+                            <center>
+                                <img src="images/level.png">
+                            </center>
+                        </td>
+                        <td>
+                            <div class="small-2 columns">
+                                <div class="row">
+                                    <div class="small-3 columns">
+                                        <label for="j2" class="right inline"><b>J<sub>2</sub>:</b></label>
+                                    </div>
+                                    <div id="spin2" class="small-8 columns">
+                                        <select id="j2" onchange="check_jvalues();recalculate_l1values();recalculate_l2values();recalculate();">
+                                            <option value=0>0</option>
+                                            <option value=1>1</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Second transition -->
+                    <tr>
+                        <td>
+                            <center>
+                                <img src="images/gamma.png">
+                            </center>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="small-1 columns">
+                                    <label class="right">L<sub>2a</sub>:</label>
+                                </div>
+                                <div class="small-11 columns">
+                                    <p id="l2a_value"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="small-1 columns">
+                                    <label class="right">L<sub>2b</sub>: </label>
+                                </div>
+                                <div class="small-11 columns">
+                                    <p id="l2b_value"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="small-3 columns">
+                                    <label class="right inline"><b>Mixing ratio (L<sub>2b</sub>/L<sub>2a</sub>):</b></label>
+                                </div>
+                                <div class="small-7 columns">
+                                    <div class="range-slider" id="delta2-slider" data-slider data-options="display_selector: #delta2; initial: 0; start: -1; end: 1; step: 0.01;" onchange="recalculate();">
+                                        <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                                        <span class="range-slider-active-segment"></span>
+                                    </div>
+                                </div>
+                                <div class="small-2 columns">
+                                    <input type="number" id="delta2" min="-1" max="1" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Third state parity -->
+                    <tr>
+                        <td>
+                            <center>
+                                <img src="images/level.png">
+                            </center>
+                        </td>
+                        <td>
+                            <div class="small-2 columns">
+                                <div class="row">
+                                    <div class="small-3 columns">
+                                        <label for="j3" class="right inline"><b>J<sub>3</sub>:</b></label>
+                                    </div>
+                                    <div id="spin3" class="small-8 columns">
+                                        <input type="text" id="j3" value="1" onchange="check_jvalues(); recalculate_l2values(); recalculate();">
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <p id="error1"></p>
+                <hr></hr>
+                <div class="row">
+                    <div class="small-10 columns">
+                        <div class="row">
+                            <div class="small-3 columns">
+                                <div class="row">
+                                    <div class="small-3 columns">
+                                        <label for="a2" class="right inline"><b>a<sub>2</sub>:</b></label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="number" id="a2" step="0.001" onchange="plot();">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="small-3 columns">
+                                        <label for="a4" class="right inline"><b>a<sub>4</sub>:</b></label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="number" id="a4" step="0.001" onchange="plot();">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="small-9 columns">
+                                <div id="graph_div" style="width:100%; height:300px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
 
-<div class="row">
-  <table style="width:100%">
-  <!-- Odd A or Even A buttons -->
-    <tr>
-    <center>
-    <ul id="evenodd" class="button-group radius toggle" data-toggle="buttons-radius">
-      <li>
-        <input type="radio" id="even" name="r-group" data-toggle="button" onchange="evenA();recalculate_l1values();recalculate_l2values();recalculate();">
-        <label class="button" for="even">Even mass</label>
-      </li>
-      <li>
-        <input type="radio" id="odd" name="r-group" data-toggle="button" onchange="oddA();recalculate_l1values();recalculate_l2values();recalculate();">
-        <label class="button" for="odd">Odd mass</label>
-      </li>
-    </ul>
-    </center> 
-  </tr>
-  <!-- First state spin -->
-    <tr>
-      <td>
-        <center>
-        <img src="images/level.png">
-        </center>
-      </td>
-      <td>
-        <div class="small-2 columns">
-          <div class="row">
-            <div class="small-3 columns">
-              <label for="j1" class="right inline"><b>J<sub>1</sub>:</b></label>
-            </div>
-            <div id="spin1" class="small-8 columns">
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>
-    <!-- First transition -->
-    <tr>
-      <td>
-        <center>
-        <img src="images/gamma.png">
-        </center>
-      </td>
-      <td>
-        <div class="row">
-          <div class="small-1 columns">
-            <label class="right">L<sub>1a</sub>:</label>
-          </div>
-          <div class="small-11 columns">
-            <p id="l1a_value"></p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="small-1 columns">
-            <label class="right">L<sub>1b</sub>: </label>
-          </div>
-          <div class="small-11 columns">
-            <p id="l1b_value"></p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="small-3 columns">
-            <label class="right inline"><b>Mixing ratio (L<sub>1b</sub>/L<sub>1a</sub>):</b></label>
-          </div>
-          <div class="small-7 columns">
-            <div class="range-slider" id="delta1-slider" data-slider data-options="display_selector: #delta1; initial: 0; start: -1; end: 1; step: 0.01;" onchange="recalculate();">
-              <span class="range-slider-handle" role="slider" tabindex="0"></span>
-              <span class="range-slider-active-segment"></span>
-            </div>
-          </div>
-          <div class="small-2 columns">
-            <input type="number" id="delta1" min="-1" max="1" step="0.01" value="0">
-          </div>
-        </div>
-      </td>
-    </tr>
-    <!-- Second state spin -->
-    <tr>
-      <td>
-        <center>
-        <img src="images/level.png">
-        </center>
-      </td>
-      <td>
-        <div class="small-2 columns">
-          <div class="row">
-            <div class="small-3 columns">
-              <label for="j2" class="right inline"><b>J<sub>2</sub>:</b></label>
-            </div>
-            <div id="spin2" class="small-8 columns">
-              <select id="j2" onchange="check_jvalues();recalculate_l1values();recalculate_l2values();recalculate();">
-                <option value=0>0</option>
-                <option value=1>1</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>
-    <!-- Second transition -->
-    <tr>
-      <td>
-        <center>
-        <img src="images/gamma.png">
-        </center>
-      </td>
-      <td>
-        <div class="row">
-          <div class="small-1 columns">
-            <label class="right">L<sub>2a</sub>:</label>
-          </div>
-          <div class="small-11 columns">
-            <p id="l2a_value"></p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="small-1 columns">
-            <label class="right">L<sub>2b</sub>: </label>
-          </div>
-          <div class="small-11 columns">
-            <p id="l2b_value"></p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="small-3 columns">
-            <label class="right inline"><b>Mixing ratio (L<sub>2b</sub>/L<sub>2a</sub>):</b></label>
-          </div>
-          <div class="small-7 columns">
-            <div class="range-slider" id="delta2-slider" data-slider data-options="display_selector: #delta2; initial: 0; start: -1; end: 1; step: 0.01;" onchange="recalculate();">
-              <span class="range-slider-handle" role="slider" tabindex="0"></span>
-              <span class="range-slider-active-segment"></span>
-            </div>
-          </div>
-          <div class="small-2 columns">
-            <input type="number" id="delta2" min="-1" max="1" step="0.01" value="0">
-          </div>
-        </div>
-      </td>
-    </tr>
-    <!-- Third state parity -->
-    <tr>
-      <td>
-        <center>
-        <img src="images/level.png">
-        </center>
-      </td>
-      <td>
-        <div class="small-2 columns">
-          <div class="row">
-            <div class="small-3 columns">
-              <label for="j3" class="right inline"><b>J<sub>3</sub>:</b></label>
-            </div>
-            <div id="spin3" class="small-8 columns">
-              <input type="text" id="j3" value="1" onchange="check_jvalues(); recalculate_l2values(); recalculate();">
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>
-  </table>
-<p id="error1"></p>
-<hr>
-<div class="row">
-  <div class="small-10 columns">
-    <div class="row">
-      <div class="small-3 columns">
-        <div class="row">
-          <div class="small-3 columns">
-            <label for="a2" class="right inline"><b>a<sub>2</sub>:</b></label>
-          </div>
-          <div class="small-8 columns">
-            <input type="number" id="a2" step="0.001" onchange="plot();">
-          </div>
-        </div>
-        <div class="row">
-          <div class="small-3 columns">
-            <label for="a4" class="right inline"><b>a<sub>4</sub>:</b></label>
-          </div>
-          <div class="small-8 columns">
-            <input type="number" id="a4" step="0.001" onchange="plot();">
-          </div>
-        </div>
-      </div>
-      <div class="small-9 columns">
-        <div id="graph_div" style="width:100%; height:300px;"></div>
-      </div>
-    </div>
-  </div>
-</div>
-</form>
-<script>
-     document.getElementById("even").checked = "checked";
-     evenA();
-     check_jvalues();
-     recalculate_l1values();
-     recalculate_l2values();
-     recalculate();
-     plot();
-</script>
+        <script>
+            document.getElementById("even").checked = "checked";
+            evenA();
+            check_jvalues();
+            recalculate_l1values();
+            recalculate_l2values();
+            recalculate();
+            plot();
+        </script>
 
-<script>
-$(document).foundation({
-  slider: {
-    on_change: function(){
-    }
-  }
-});
-</script>
-
-</body>
+        <script>
+            $(document).foundation({
+                slider: {
+                    on_change: function(){}
+                }
+            });
+        </script>
+    </body>
 </html>
