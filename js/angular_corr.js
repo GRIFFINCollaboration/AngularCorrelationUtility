@@ -36,98 +36,68 @@ function plot(){
     );
 };
 
-function recalculate_l1values(){
-    var j1 = document.getElementById("j1").value*1;
-    var j2 = document.getElementById("j2").value*1;
-    var j3 = document.getElementById("j3").value*1;
-    var l1min, l1max, l1a, l1b, l1aradios, l1bradios, i;
+function recalculate_L(transition){
+    // transition == 1 -> first transition; 2 -> second transition.
+
+    var jOrig = parseFloat(document.getElementById("j" + transition).value),
+        jFinal = parseFloat(document.getElementById("j" + (transition+1)).value),
+        lMin, lMax, lA, lB, i, j,
+        radio, label, chosenMomenta,
+        momenta = ['l'+transition+'a', 'l'+transition+'b'],
+        momenta_options = [document.getElementById('l'+transition+'a_value'), document.getElementById('l'+transition+'b_value')];
 
     // l1 possibilities
-    l1min = Math.abs(j2-j1);
-    l1max = Math.abs(j2+j1);
-    if (l1min==0){
-        l1min = 1;
+    lMin = Math.abs(jFinal-jOrig);
+    lMax = Math.abs(jFinal+jOrig);
+    if (lMin==0){
+        lMin = 1;
     }
-    l1a = l1min;
-    l1b = l1a+1;
-    if (l1min==l1max){
-        l1b = l1a;
+    lA = lMin;
+    lB = lA+1;
+    if (lMin==lMax){
+        lB = lA;
     }
+    chosenMomenta = [lA, lB];
 
-    l1aradios = "";
-    for (i = l1min;i<=l1max;i++){
-		    if (i==l1a)
-		        l1aradios = l1aradios + "<input type=\"radio\" name=\"l1a\" value=" + i + " id=\"l1_" + i + "\" checked=\"checked\"><label for=\"l1_" + i + "\">" + i + "</label>";
-		    else
-		        l1aradios = l1aradios + "<input type=\"radio\" name=\"l1a\" value=" + i + " id=\"l1_" + i + "\"><label for=\"l1_" + i + "\">" + i + "</label>";
-    }
+    for(j=0; j<momenta.length; j++){
+        momenta_options[j].innerHTML = '';
+        for (i = lMin; i<=lMax; i++){
+            radio = document.createElement('input');
+            radio.setAttribute('type', 'radio');
+            radio.setAttribute('name', momenta[j]);
+            radio.setAttribute('value', i);
+            radio.setAttribute('id', momenta[j] + '_' + i);
+            if(i == chosenMomenta[j])
+                radio.setAttribute('checked', true);
+            momenta_options[j].appendChild(radio);
 
-    l1bradios = "";
-    for (i = l1min;i<=l1max;i++){
-		    if (i==l1b)
-		        l1bradios = l1bradios + "<input type=\"radio\" name=\"l1b\" value=" + i + " id=\"l1_" + i + "\" checked=\"checked\"><label for=\"l1_" + i + "\">" + i + "</label>";
-		    else
-		        l1bradios = l1bradios + "<input type=\"radio\" name=\"l1b\" value=" + i + " id=\"l1_" + i + "\"><label for=\"l1_" + i + "\">" + i + "</label>";
-    }
-    document.getElementById("l1a_value").innerHTML = l1aradios;
-    document.getElementById("l1b_value").innerHTML = l1bradios;
-};
-
-function recalculate_l2values(){
-    var j2 = document.getElementById("j2").value*1;
-    var j3 = document.getElementById("j3").value*1;
-    var l2min, l2max, l2a, l2b, l2aradios, l2bradios, i;
-
-    // l2 possibilities
-    l2min = Math.abs(j3-j2);
-    l2max = Math.abs(j3+j2);
-    if (l2min==0){
-        l2min = 1;
-    }
-    l2a = l2min;
-    l2b = l2a+1;
-    if (l2min==l2max){
-        l2b = l2a;
-    }
-
-    l2aradios = "";
-    for (i = l2min; i<=l2max; i++){
-		    if (i==l2a)
-		        l2aradios = l2aradios + "<input type=\"radio\" name=\"l2a\" value=" + i + " id=\"l2_" + i + "\" checked=\"checked\"><label for=\"l2_" + i + "\">" + i + "</label>";
-		    else
-		        l2aradios = l2aradios + "<input type=\"radio\" name=\"l2a\" value=" + i + " id=\"l2_" + i + "\"><label for=\"l2_" + i + "\">" + i + "</label>";
-    }
-
-    l2bradios = "";
-      for (i = l2min; i<=l2max; i++){
-          if (i==l2b)
-		          l2bradios = l2bradios + "<input type=\"radio\" name=\"l2b\" value=" + i + " id=\"l2_" + i + "\" checked=\"checked\"><label for=\"l2_" + i + "\">" + i + "</label>";
-		      else
-		          l2bradios = l2bradios + "<input type=\"radio\" name=\"l2b\" value=" + i + " id=\"l2_" + i + "\"><label for=\"l2_" + i + "\">" + i + "</label>";
-      }
-      document.getElementById("l2a_value").innerHTML = l2aradios;
-      document.getElementById("l2b_value").innerHTML = l2bradios;
+            label = document.createElement('label');
+            label.setAttribute('for', momenta[j] + '_' + i);
+            label.innerHTML = i;
+            momenta_options[j].appendChild(label);
+        }
+    } 
 };
 
 function check_jvalues(){
         
-    var j1 = document.getElementById("j1").value*1;
-    var j2 = document.getElementById("j2").value*1;
-    var j3 = document.getElementById("j3").value*1;
+    var j1 = parseFloat(document.getElementById("j1").value);
+    var j2 = parseFloat(document.getElementById("j2").value);
+    var j3 = parseFloat(document.getElementById("j3").value);
 
     document.getElementById("error1").innerHTML = "";
 
     if (j2==0 && (j1==0 || j3==0)){
         j2 = 1;
-        document.getElementById("j2").value = 1*1;
+        document.getElementById("j2").value = 1;
         alert("No 0 to 0 transitions allowed. Setting J2 to 1");
     }
 };
 
 function recalculate(){
-    var j1 = document.getElementById("j1").value*1;
-    var j2 = document.getElementById("j2").value*1;
-    var j3 = document.getElementById("j3").value*1;
+    var j1 = parseFloat(document.getElementById("j1").value);
+    var j2 = parseFloat(document.getElementById("j2").value);
+    var j3 = parseFloat(document.getElementById("j3").value);
 
     var l1a = $('input[name="l1a"]:checked').val()*1;
     var l1b = $('input[name="l1b"]:checked').val()*1;

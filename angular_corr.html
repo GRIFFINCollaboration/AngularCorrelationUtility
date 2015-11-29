@@ -17,11 +17,11 @@
                         <center>
                             <ul id="evenodd" class="button-group radius toggle" data-toggle="buttons-radius">
                                 <li>
-                                    <input type="radio" id="even" name="r-group" data-toggle="button" onchange="evenA();recalculate_l1values();recalculate_l2values();recalculate();" checked>
+                                    <input type="radio" id="even" name="r-group" data-toggle="button" onchange="evenA();recalculate_L(1);recalculate_L(2);recalculate();" checked>
                                     <label class="button" for="even">Even mass</label>
                                 </li>
                                 <li>
-                                    <input type="radio" id="odd" name="r-group" data-toggle="button" onchange="oddA();recalculate_l1values();recalculate_l2values();recalculate();">
+                                    <input type="radio" id="odd" name="r-group" data-toggle="button" onchange="oddA();recalculate_L(1);recalculate_L(2);recalculate();">
                                     <label class="button" for="odd">Odd mass</label>
                                 </li>
                             </ul>
@@ -38,7 +38,7 @@
                             <div class="small-2 columns">
                                 <div class="row">    
                                     <label for="j1" class="right inline"><b>J<sub>1</sub>:</b></label>
-                                    <select id="j1" onchange="check_jvalues(); recalculate_l1values(); recalculate();"></select>
+                                    <select id="j1" onchange="check_jvalues(); recalculate_L(1); recalculate();"></select>
                                 </div>
                             </div>
                         </td>
@@ -56,7 +56,7 @@
                                     <label class="right">L<sub>1a</sub>:</label>
                                 </div>
                                 <div class="small-11 columns">
-                                    <p id="l1a_value"></p>
+                                    <div id="l1a_value"></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -64,7 +64,7 @@
                                     <label class="right">L<sub>1b</sub>: </label>
                                 </div>
                                 <div class="small-11 columns">
-                                    <p id="l1b_value"></p>
+                                    <div id="l1b_value"></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -94,7 +94,7 @@
                             <div class="small-2 columns">
                                 <div class="row">
                                     <label for="j2" class="right inline"><b>J<sub>2</sub>:</b></label>
-                                    <select id="j2" onchange="check_jvalues();recalculate_l1values();recalculate_l2values();recalculate();"></select>
+                                    <select id="j2" onchange="check_jvalues();recalculate_L(1);recalculate_L(2);recalculate();"></select>
                                 </div>
                             </div>
                         </td>
@@ -112,7 +112,7 @@
                                     <label class="right">L<sub>2a</sub>:</label>
                                 </div>
                                 <div class="small-11 columns">
-                                    <p id="l2a_value"></p>
+                                    <div id="l2a_value"></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -120,7 +120,7 @@
                                     <label class="right">L<sub>2b</sub>: </label>
                                 </div>
                                 <div class="small-11 columns">
-                                    <p id="l2b_value"></p>
+                                    <div id="l2b_value"></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -150,7 +150,7 @@
                             <div class="small-2 columns">
                                 <div class="row">
                                     <label for="j3" class="right inline"><b>J<sub>3</sub>:</b></label>
-                                    <select id="j3" onchange="check_jvalues();recalculate_l2values();recalculate();"></select>
+                                    <select id="j3" onchange="check_jvalues();recalculate_L(2);recalculate();"></select>
                                 </div>
                             </div>
                         </td>
@@ -189,10 +189,12 @@
         </form>
 
         <script>
+            //set up spin option dropdowns
             evenA();
+
             check_jvalues();
-            recalculate_l1values();
-            recalculate_l2values();
+            recalculate_L(1);
+            recalculate_L(2);
             recalculate();
             plot();
         </script>
