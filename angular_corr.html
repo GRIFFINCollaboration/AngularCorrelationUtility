@@ -17,7 +17,7 @@
                         <center>
                             <ul id="evenodd" class="button-group radius toggle" data-toggle="buttons-radius">
                                 <li>
-                                    <input type="radio" id="even" name="r-group" data-toggle="button" onchange="evenA();recalculate_l1values();recalculate_l2values();recalculate();">
+                                    <input type="radio" id="even" name="r-group" data-toggle="button" onchange="evenA();recalculate_l1values();recalculate_l2values();recalculate();" checked>
                                     <label class="button" for="even">Even mass</label>
                                 </li>
                                 <li>
@@ -36,11 +36,9 @@
                         </td>
                         <td>
                             <div class="small-2 columns">
-                                <div class="row">
-                                    <div class="small-3 columns">
-                                        <label for="j1" class="right inline"><b>J<sub>1</sub>:</b></label>
-                                    </div>
-                                    <div id="spin1" class="small-8 columns"></div>
+                                <div class="row">    
+                                    <label for="j1" class="right inline"><b>J<sub>1</sub>:</b></label>
+                                    <select id="j1" onchange="check_jvalues(); recalculate_l1values(); recalculate();"></select>
                                 </div>
                             </div>
                         </td>
@@ -95,15 +93,8 @@
                         <td>
                             <div class="small-2 columns">
                                 <div class="row">
-                                    <div class="small-3 columns">
-                                        <label for="j2" class="right inline"><b>J<sub>2</sub>:</b></label>
-                                    </div>
-                                    <div id="spin2" class="small-8 columns">
-                                        <select id="j2" onchange="check_jvalues();recalculate_l1values();recalculate_l2values();recalculate();">
-                                            <option value=0>0</option>
-                                            <option value=1>1</option>
-                                        </select>
-                                    </div>
+                                    <label for="j2" class="right inline"><b>J<sub>2</sub>:</b></label>
+                                    <select id="j2" onchange="check_jvalues();recalculate_l1values();recalculate_l2values();recalculate();"></select>
                                 </div>
                             </div>
                         </td>
@@ -158,12 +149,8 @@
                         <td>
                             <div class="small-2 columns">
                                 <div class="row">
-                                    <div class="small-3 columns">
-                                        <label for="j3" class="right inline"><b>J<sub>3</sub>:</b></label>
-                                    </div>
-                                    <div id="spin3" class="small-8 columns">
-                                        <input type="text" id="j3" value="1" onchange="check_jvalues(); recalculate_l2values(); recalculate();">
-                                    </div>
+                                    <label for="j3" class="right inline"><b>J<sub>3</sub>:</b></label>
+                                    <select id="j3" onchange="check_jvalues();recalculate_l2values();recalculate();"></select>
                                 </div>
                             </div>
                         </td>
@@ -202,7 +189,6 @@
         </form>
 
         <script>
-            document.getElementById("even").checked = "checked";
             evenA();
             check_jvalues();
             recalculate_l1values();
