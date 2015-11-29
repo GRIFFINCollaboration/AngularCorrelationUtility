@@ -1,13 +1,13 @@
 function plot(){
-    var graph = document.getElementById("graph_div");
-    var width = parseInt(graph.style.width, 10);
-    var x1 = -1;
-    var x2 = 1;
-    var a2 = parseFloat(document.getElementById("a2").value);
-    var a4 = parseFloat(document.getElementById("a4").value);
-    var xs = 1.0 * (x2 - x1) / width;
-    var data = [];
-    var i, j, x, y, row;
+    var graph = document.getElementById("graph_div"),
+        width = parseInt(graph.style.width, 10),
+        x1 = -1,
+        x2 = 1,
+        a2 = parseFloat(document.getElementById("a2").value),
+        a4 = parseFloat(document.getElementById("a4").value),
+        xs = 1.0 * (x2 - x1) / width,
+        data = [],
+        i, j, x, y, row;
 
     //generate data to plot
     for(i = 0; i < width; i++) {
@@ -82,8 +82,8 @@ function recalculate_L(transition){
 function check_jvalues(){
         
     var j1 = parseFloat(document.getElementById("j1").value);
-    var j2 = parseFloat(document.getElementById("j2").value);
-    var j3 = parseFloat(document.getElementById("j3").value);
+        j2 = parseFloat(document.getElementById("j2").value),
+        j3 = parseFloat(document.getElementById("j3").value),
 
     document.getElementById("error1").innerHTML = "";
 
@@ -95,17 +95,17 @@ function check_jvalues(){
 };
 
 function recalculate(){
-    var j1 = parseFloat(document.getElementById("j1").value);
-    var j2 = parseFloat(document.getElementById("j2").value);
-    var j3 = parseFloat(document.getElementById("j3").value);
+    var j1 = parseFloat(document.getElementById("j1").value),
+        j2 = parseFloat(document.getElementById("j2").value),
+        j3 = parseFloat(document.getElementById("j3").value),
 
-    var l1a = $('input[name="l1a"]:checked').val()*1;
-    var l1b = $('input[name="l1b"]:checked').val()*1;
-    var l2a = $('input[name="l2a"]:checked').val()*1;
-    var l2b = $('input[name="l2b"]:checked').val()*1;
+        l1a = parseFloat($('input[name="l1a"]:checked').val()),
+        l1b = parseFloat($('input[name="l1b"]:checked').val()),
+        l2a = parseFloat($('input[name="l2a"]:checked').val()),
+        l2b = parseFloat($('input[name="l2b"]:checked').val()),
 
-    var d1 = $('#delta1-slider').attr('data-slider');
-    var d2 = $('#delta2-slider').attr('data-slider');
+        d1 = $('#delta1-slider').attr('data-slider'),
+        d2 = $('#delta2-slider').attr('data-slider');
 
     if (l1a==l1b){
         if (d1!=0){
@@ -277,13 +277,14 @@ function Wigner3j(j1, j2, j3, m1, m2, m3){
 };
 
 function Wigner6j(J1, J2, J3, J4, J5, J6){
+    
     var j1 = J1;
-    var j2 = J2;
-    var j12 = J3;
-    var j3 = J4;
-    var j = J5;
-    var j23 = J6;
-    var sum = 0;
+        j2 = J2,
+        j12 = J3,
+        j3 = J4,
+        j = J5,
+        j23 = J6,
+        sum = 0;
 
     // Conditions check
     if(J3 > J1 + J2 || J3 < Math.abs(J1 - J2)){
