@@ -1,0 +1,126 @@
+<html>
+    <head>
+        <script type="text/javascript" src="js/dygraphs.1.1.1.min.js"></script>
+        <script src="js/jquery1-11-3.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="js/bootstrap3-3-5.min.js"></script>
+
+        <script type="text/javascript" src = "js/angular_corr.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/custom.css"/>
+    </head>
+
+    <body>
+
+        <!--header-->
+        <div class='branding header'>
+            <h1>Angular Correlation Calculator</h1>
+        </div>
+
+        <div class='sectionWrapper'>
+            <div id='plotCol' class='col-md-9'>
+                <!-- plot -->
+                <div id="graph_div" class='plotWrap'></div>
+            </div>
+
+            <div class='col-md-3'>
+                <form class='content' autocomplete='off'>
+                    <!-- even / odd -->
+                    <div>
+                        <input type="radio" id="even" name="r-group" data-toggle="button" onchange="evenA();recalculate_L(1);recalculate_L(2);recalculate();" checked>
+                        <label class="button" for="even">Even mass</label>
+                        <input type="radio" id="odd" name="r-group" data-toggle="button" onchange="oddA();recalculate_L(1);recalculate_L(2);recalculate();">
+                        <label class="button" for="odd">Odd mass</label>
+                    </div>
+
+                    <hr></hr>
+
+                    <!-- j1 -->
+                    <label for="j1" class="right inline"><b>J<sub>1</sub>:</b></label>
+                    <select id="j1" onchange="check_jvalues(); recalculate_L(1); recalculate();"></select>             
+                    <div id="l1a_value"></div>               
+                    <div id="l1b_value"></div>
+                    <label>L<sub>1a</sub>/L<sub>1b</sub> Mixing:</label>
+                    <input id='delta1-slider' type='range' min='-1' max='1' step='0.01' value='0' oninput='syncElements("delta1-slider", "mix1")' onchange='recalculate()' class='mixer'></input>
+                    <input id='mix1' type='number' min='-1' max='1' step='0.01' value='0' onchange='syncElements("mix1", "delta1-slider"); recalculate();' class='mixer'></input>
+
+                    <hr></hr>
+
+                    <!-- j2 -->
+                    <label for="j2" class="right inline"><b>J<sub>2</sub>:</b></label>
+                    <select id="j2" onchange="check_jvalues(); recalculate_L(1); recalculate_L(2); recalculate();"></select>             
+                    <div id="l2a_value"></div>               
+                    <div id="l2b_value"></div>
+                    <label>L<sub>2a</sub>/L<sub>2b</sub> Mixing:</label>
+                    <input id='delta2-slider' type='range' min='-1' max='1' step='0.01' value='0' oninput='syncElements("delta2-slider", "mix2")' onchange='recalculate()' class='mixer'></input>
+                    <input id='mix2' type='number' min='-1' max='1' step='0.01' value='0' onchange='syncElements("mix2", "delta2-slider"); recalculate();' class='mixer'></input>
+
+                    <hr></hr>
+
+                    <!-- j3 -->
+                    <label for="j3" class="right inline"><b>J<sub>3</sub>:</b></label>
+                    <select id="j3" onchange="check_jvalues();recalculate_L(2);recalculate();"></select>
+
+                    <hr></hr>
+
+                    <!-- a2, a4 -->
+                    <div>
+                        <label for="a2" class="right inline"><b>a<sub>2</sub>:</b></label>
+                        <input type="number" id="a2" step="0.001" onchange="plot();">
+                    </div>
+                    <div>
+                        <label for="a4" class="right inline"><b>a<sub>4</sub>:</b></label>
+                        <input type="number" id="a4" step="0.001" onchange="plot();">
+                    </div>
+                </form>
+
+                <p id="error1"></p>
+            </div>
+        </div>
+
+        <div class='sectionWrapper content references'>
+            <div class='col-md-3'>
+                <img src='images/levelScheme.png'></img>
+            </div>
+
+            <div class='col-md-9'>
+                <h2>References</h2>
+                <h3>Physics</h3>
+                <ol>
+                    <li>Clebsch-Gordon Coefficients: <i>An Effective Algorithm for Calculation of the C.G. Coefficients</i>, Liang Zuo, et. al. J. Appl. Cryst. (1993). 26, 302-304</li>
+                    <li><i>Tables of coefficients for angular distribution of gamma rays from aligned nuclei</i>, T. Yamazaki. Nuclear Data A, 3(1):1-23, 1967.</li>
+                </ol>
+
+                <h3>Software</h3>
+                <ul>
+                    <li>Figures: <a href='https://github.com/danvk/dygraphs/releases/tag/v1.1.1'>Dygraphs v1.1.1</a>, Dan Vanderkam</li>
+                    <li>CSS: <a href='http://getbootstrap.com/'>Twitter Bootstrap v3.3.5</a>, Twitter</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id='footer' class='branding footer'>
+            <h3>Built at TRIUMF</h3>
+            <div class='col-md-4'>
+                <div>Citation DOI: TBD</div>
+                <a href='https://github.com/GRIFFINCollaboration/AngularCorrelationUtility'>Source Code on GitHub</a>
+            </div>
+        </div>
+
+        <script>
+            //set up spin option dropdowns
+            evenA();
+
+            //generate initial calculation state
+            check_jvalues();
+            recalculate_L(1);
+            recalculate_L(2);
+            recalculate();
+            plot();
+
+            //repaint with window resize
+            window.onresize = plot
+        </script>
+
+    </body>
+
+</html>
