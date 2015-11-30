@@ -21,6 +21,11 @@ div.subsectionWrapper{
     display: none;
 }
 
+label{
+    margin-right: 4px;
+    margin-left: 2px;
+}
+
 /* Header & Footer */
 div.branding{
     background-color: #367FA9;
