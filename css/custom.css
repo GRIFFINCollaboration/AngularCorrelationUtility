@@ -65,6 +65,10 @@ div.warning{
     background-color: #F2DEDE;
 }
 
+.a2a4:invalid{
+    box-shadow: none;
+}
+
 /*references*/
 div.references{
     display: inline-block;
