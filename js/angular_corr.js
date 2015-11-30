@@ -7,6 +7,8 @@ function plot(){
         a4 = parseFloat(document.getElementById("a4").value),
         xs = 1.0 * (x2 - x1) / width,
         data = [],
+        plotWidth = document.getElementById('plotCol').offsetWidth,
+        plotHeight = plotWidth*3/4,
         i, j, x, y, row;
 
     //generate data to plot
@@ -24,6 +26,9 @@ function plot(){
         data.push(row);
     }
 
+    //dygraphs fixes div size on paint, remove to allow resize
+    document.getElementById('graph_div').setAttribute('style', '');
+
     new Dygraph(graph, data,
         {
             xlabel: "cos &#952",
@@ -31,7 +36,9 @@ function plot(){
             labels: ['Cos','W'],
             color: "red",
             strokeWidth: 3.0,
-            valueRange: [0.0, 2.0]
+            valueRange: [0.0, 2.0],
+            width: plotWidth,
+            height: plotHeight
         }
     );
 };
@@ -61,12 +68,18 @@ function recalculate_L(transition){
 
     for(j=0; j<momenta.length; j++){
         momenta_options[j].innerHTML = '';
+
+        label = document.createElement('label');
+        label.innerHTML = "L<sub>" + momenta[j].slice(1) + "</sub>";
+        momenta_options[j].appendChild(label);
+
         for (i = lMin; i<=lMax; i++){
             radio = document.createElement('input');
             radio.setAttribute('type', 'radio');
             radio.setAttribute('name', momenta[j]);
             radio.setAttribute('value', i);
             radio.setAttribute('id', momenta[j] + '_' + i);
+            radio.onchange = recalculate;
             if(i == chosenMomenta[j])
                 radio.setAttribute('checked', true);
             momenta_options[j].appendChild(radio);
@@ -104,28 +117,30 @@ function recalculate(){
         l2a = parseFloat($('input[name="l2a"]:checked').val()),
         l2b = parseFloat($('input[name="l2b"]:checked').val()),
 
-        d1 = $('#delta1-slider').attr('data-slider'),
-        d2 = $('#delta2-slider').attr('data-slider');
+        d1 = parseFloat($('#mix1').val()),
+        d2 = parseFloat($('#mix2').val());
 
     if (l1a==l1b){
         if (d1!=0){
             d1 = 0;
-            $('.range-slider').foundation('delta1-slider', 'set_value', d1);
+            $('#mix1').val(d2);
+            $('#delta1-slider').val(d2);
             alert("can't have mixing; only multipolarity selected is "+l1a);
         }
-        $('#delta1-slider').addClass('disabled');
+        $('#delta1-slider').attr('disabled', 'true');
     } else {
-        $('#delta1-slider').removeClass('disabled');
+        $('#delta1-slider').removeAttr('disabled');
     }
     if (l2a==l2b){
-		  if (d2!=0){
+		if (d2!=0){
 		    d2 = 0;
-		    $('#delta2-slider').foundation('slider', 'set_value', d2);
+		    $('#mix2').val(d2);
+            $('#delta2-slider').val(d2);
 		    alert("Can't have mixing; only multipolarity selected is "+l2a);
-		  }
-		  $('#delta2-slider').addClass('disabled');
+		}
+		$('#delta2-slider').attr('disabled', 'true');
     } else {
-		  $('#delta2-slider').removeClass('disabled');
+		$('#delta2-slider').removeAttr('disabled');
     }
 
     document.getElementById("a2").value = calculate_a2(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2);
@@ -392,3 +407,16 @@ function oddA(){
     document.getElementById("j2").value = 1.5;
     document.getElementById("j3").value = 0.5;
 };
+
+/////////////////
+// ui helpers
+/////////////////
+
+function syncElements(source, dest){
+    //source: string; id of element to read value from
+    //dest: string; id of element to write value to
+    //onchange callback to set the value of another element to that of this one.
+
+    var val = document.getElementById(source).value;
+    document.getElementById(dest).value = val;
+}
