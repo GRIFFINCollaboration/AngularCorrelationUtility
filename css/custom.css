@@ -17,6 +17,10 @@ div.subsectionWrapper{
     border-top: 2px solid #F39C12;
 }
 
+.hidden{
+    display: none;
+}
+
 /* Header & Footer */
 div.branding{
     background-color: #367FA9;
@@ -53,6 +57,12 @@ input[type='range'].mixer{
 input[type='number'].mixer{
     width: 20%;
     display: inline;
+}
+
+div.warning{
+    padding: 1em;
+    margin-top: 1em;
+    background-color: #F2DEDE;
 }
 
 /*references*/

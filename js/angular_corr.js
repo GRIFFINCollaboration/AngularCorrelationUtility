@@ -147,6 +147,8 @@ function recalculate(){
     document.getElementById("a4").value = calculate_a4(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2);
 
     plot();
+
+    document.getElementById('customAwarning').classList.add('hidden');
 };
 
 function calculate_a2(j1, j2, j3, l1a, l1b, l2a, l2b, delta1, delta2){
