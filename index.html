@@ -111,18 +111,28 @@
         </div>
 
         <script>
+            //global datastore
+            dataStore = {
+                cache: {
+                    factorial: [],
+                    CG: {}
+                }
+            };
+
             //set up spin option dropdowns
             evenA();
+            //set up plot
+            plot(true);
 
             //generate initial calculation state
             check_jvalues();
             recalculate_L(1);
             recalculate_L(2);
             recalculate();
-            plot();
 
             //repaint with window resize
             window.onresize = plot
+
         </script>
 
     </body>

@@ -1,6 +1,6 @@
-function plot(){
+function plot(setup){
     var graph = document.getElementById("graph_div"),
-        width = parseInt(graph.style.width, 10),
+        width = 1000,
         x1 = -1,
         x2 = 1,
         a2 = parseFloat(document.getElementById("a2").value),
@@ -29,18 +29,23 @@ function plot(){
     //dygraphs fixes div size on paint, remove to allow resize
     document.getElementById('graph_div').setAttribute('style', '');
 
-    new Dygraph(graph, data,
-        {
-            xlabel: "cos &#952",
-            ylabel: "W(&#952)",
-            labels: ['Cos','W'],
-            color: "red",
-            strokeWidth: 3.0,
-            valueRange: [0.0, 2.0],
-            width: plotWidth,
-            height: plotHeight
-        }
-    );
+    //first time setup the dygraphs
+    if(setup){
+        dataStore.plot = new Dygraph(graph, [[0,0],[0,0]],
+            {
+                xlabel: "cos &#952",
+                ylabel: "W(&#952)",
+                labels: ['Cos','W'],
+                color: "red",
+                strokeWidth: 3.0,
+                valueRange: [0.0, 2.0],
+                width: plotWidth,
+                height: plotHeight
+            }
+        );
+    } else {
+        dataStore.plot.updateOptions( { 'file': data });
+    }
 };
 
 function recalculate_L(transition){
@@ -108,6 +113,7 @@ function check_jvalues(){
 };
 
 function recalculate(){
+    
     var j1 = parseFloat(document.getElementById("j1").value),
         j2 = parseFloat(document.getElementById("j2").value),
         j3 = parseFloat(document.getElementById("j3").value),
@@ -161,17 +167,25 @@ function calculate_a4(j1, j2, j3, l1a, l1b, l2a, l2b, delta1, delta2){
 
 //------------------------------begin angular correlation functions--------------------//
 function Factorial(value){
+
     var fac;
-    if(value > 1){
-        fac = value*Factorial(value-1);
+
+    if(dataStore.cache.factorial[value]){
+        return dataStore.cache.factorial[value];
     } else {
-        fac = 1;
+        if(value > 1){
+            fac = value*Factorial(value-1);
+        } else {
+            fac = 1;
+        }
+        dataStore.cache.factorial[value] = fac;
+
+        return fac;
     }
-    return fac;
 }
 
 function ClebschGordan(j1, m1, j2, m2, j, m){
-    var term, cg, term1, sum, k;
+    var term, cg, term1, sum, k
 
     // Conditions check
     if( 2*j1 != Math.floor(2*j1) || 
@@ -229,7 +243,12 @@ function ClebschGordan(j1, m1, j2, m2, j, m){
     sum = 0;
     
     for(k = 0 ; k <= 99 ; k++ ){
-        if( (j1+j2-j-k < 0) || (j-j1-m2+k < 0) || (j-j2+m1+k < 0) || (j1-m1-k < 0) || (j2+m2-k < 0) ){}
+        if( (j1+j2-j-k < 0) || (j1-m1-k < 0) || (j2+m2-k < 0) )
+            //no further terms will contribute to sum, exit loop
+            break
+        else if( (j-j1-m2+k < 0) || (j-j2+m1+k < 0)  )
+            //jump ahead to next term that will contribute
+            k = Math.max(Math.max(j-j1-m2, j-j2+m1) - 1, k);
         else{
             term = Factorial(j1+j2-j-k)*Factorial(j-j1-m2+k)*Factorial(j-j2+m1+k)*Factorial(j1-m1-k)*Factorial(j2+m2-k)*Factorial(k);
             if((k%2) == 1){
@@ -248,17 +267,16 @@ function ClebschGordan(j1, m1, j2, m2, j, m){
 
 function Wigner3j(j1, j2, j3, m1, m2, m3){
     var out;
-
     // Conditions check
-    if( 2*j1 != Math.floor(2*j1) || 
-        2*j2 != Math.floor(2*j2) || 
-        2*j3 != Math.floor(2*j3) || 
-        2*m1 != Math.floor(2*m1) || 
-        2*m2 != Math.floor(2*m2) || 
-        2*m3 != Math.floor(2*m3) ){
-        // G4cout << "All arguments must be integers or half-integers." << G4endl;
-        return 0;
-    }
+    // if( 2*j1 != Math.floor(2*j1) || 
+    //     2*j2 != Math.floor(2*j2) || 
+    //     2*j3 != Math.floor(2*j3) || 
+    //     2*m1 != Math.floor(2*m1) || 
+    //     2*m2 != Math.floor(2*m2) || 
+    //     2*m3 != Math.floor(2*m3) ){
+    //     // G4cout << "All arguments must be integers or half-integers." << G4endl;
+    //     return 0;
+    // }
 
     if(m1 + m2 + m3 != 0){
         //G4cout << "m1 + m2 + m3 must equal zero." << G4endl;
@@ -290,11 +308,10 @@ function Wigner3j(j1, j2, j3, m1, m2, m3){
     }
 
     out = (Math.pow((-1),(j1-j2-m3)))/(Math.pow((2*j3+1),(1.0/2.0)))*ClebschGordan(j1,m1,j2,m2,j3,-1*m3);
-        return out;
+    return out;
 };
 
 function Wigner6j(J1, J2, J3, J4, J5, J6){
-    
     var j1 = J1;
         j2 = J2,
         j12 = J3,
