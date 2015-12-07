@@ -79,6 +79,49 @@ function plot2D(n){
     Plotly.newPlot('a'+n+'Plot', data, layout);
 }
 
+function plot_a(n, missingL1, missingL2){
+    //regenerate the 1D plot for at (n==2) or a4 (n==4)
+    //leave the appropriate mixing ratio unconstrained depending on who's not missing (should never be both missing)
+
+    var data,
+        dim = document.getElementById('a'+n+'Wrap').offsetWidth,
+        layout = {
+            autosize: false,
+            width: dim,
+            height: dim,
+            xaxis:{
+                title: missingL1 ? 'L<sub>2a</sub> / L<sub>2b</sub> mixing' : 'L<sub>1a</sub> / L<sub>1b</sub> mixing'
+            },
+            yaxis:{
+                title: (n==2) ? 'a2' : 'a4'
+            },
+        }, i,
+        zero = 1/(2/dataStore.steps)
+
+    //slice this 2D data along 0 for the missing mixing ratio 
+    if(missingL1){
+        data = [];
+        for(i=0; i<dataStore.steps; i++){
+            data.push( (n==2) ? dataStore.a2[i][zero] : dataStore.a4[i][zero] );
+        }
+    } else if(missingL2){
+        data = (n==2) ? dataStore.a2[zero] : dataStore.a4[zero]
+    }
+
+    //construct the plotly data object
+    data = [
+        {
+            x: dataStore.x,
+            y: data,
+            name: (n==2) ? 'a2': 'a4',
+            mode: 'markers',
+            type: 'scatter'
+        }
+    ]
+    
+    Plotly.newPlot('a'+n+'Plot', data, layout);    
+}
+
 function recalculate_L(transition){
     // transition == 1 -> first transition; 2 -> second transition.
 
@@ -155,9 +198,12 @@ function recalculate(){
 
         d1 = parseFloat($('#mix1').val()),
         d2 = parseFloat($('#mix2').val()),
-        i, j, row;
+        i, j, row,
+        noL1mix = false, 
+        noL2mix = false;
 
     if (l1a==l1b){
+        noL1mix = true;
         if (d1!=0){
             d1 = 0;
             $('#mix1').val(d2);
@@ -169,6 +215,7 @@ function recalculate(){
         $('#delta1-slider').removeAttr('disabled');
     }
     if (l2a==l2b){
+        noL2mix = true;
 		if (d2!=0){
 		    d2 = 0;
 		    $('#mix2').val(d2);
@@ -187,7 +234,7 @@ function recalculate(){
 
     document.getElementById('customAwarning').classList.add('hidden');
 
-    //2D a2 and a4 plots
+    //a2 and a4 plots
     //generate data
     dataStore.a2 = [];
     dataStore.a4 = [];
@@ -199,25 +246,19 @@ function recalculate(){
             dataStore.a4[i][j] = dataStore.A4[i]*dataStore.B4[j];
         }
     }
-    plot2D(2);
-    plot2D(4);
+
+    if (noL1mix && noL2mix){
+        document.getElementById('a2Plot').innerHTML = '';
+        document.getElementById('a4Plot').innerHTML = '';
+    }
+    else if(noL1mix || noL2mix){
+        plot_a(2, noL1mix, noL2mix);
+        plot_a(4, noL1mix, noL2mix);
+    } else {
+        plot2D(2);
+        plot2D(4);
+    }
 };
-
-function plot_a(n){
-    //n: number; 2 or 4, corresponding to a2 or a4
-    //regenerate the plot for a2 or a4
-
-    var j1 = parseFloat(document.getElementById("j1").value),
-        j2 = parseFloat(document.getElementById("j2").value),
-        j3 = parseFloat(document.getElementById("j3").value),
-
-        l1a = parseFloat($('input[name="l1a"]:checked').val()),
-        l1b = parseFloat($('input[name="l1b"]:checked').val()),
-        l2a = parseFloat($('input[name="l2a"]:checked').val()),
-        l2b = parseFloat($('input[name="l2b"]:checked').val()),
-        i, j;
-
-}
 
 function calculate_a2(j1, j2, j3, l1a, l1b, l2a, l2b, delta1, delta2){
     return B(2,j2,j1,l1a,l1b,delta1)*A(2,j3,j2,l2a,l2b,delta2);
