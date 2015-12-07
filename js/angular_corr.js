@@ -65,10 +65,10 @@ function plot2D(n){
         layout = {
             title: (n==2) ? 'a2' : 'a4',
             xaxis:{
-                title: 'mixing ratio 1'
+                title: 'L<sub>1a</sub> / L<sub>1b</sub> mixing'
             },
             yaxis:{
-                title: 'mixing ratio 2'
+                title: 'L<sub>2a</sub> / L<sub>2b</sub> mixing'
             },
             autosize: false,
             width: dim,
