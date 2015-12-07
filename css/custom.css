@@ -76,5 +76,5 @@ div.warning{
 
 /*references*/
 div.references{
-    display: inline-block;
+    display: flex;
 }

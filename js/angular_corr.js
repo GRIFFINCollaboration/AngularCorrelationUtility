@@ -48,6 +48,37 @@ function plot(setup){
     }
 };
 
+function plot2D(n){
+    //regenerate the plot for a2 (n=2) or a4 (n=4)
+    var data = [
+            {
+                x: dataStore.x,
+                y: dataStore.y,
+                z: (n==2) ? dataStore.a2 : dataStore.a4,
+                type: 'heatmap',
+                name: (n==2) ? 'a2': 'a4', 
+                hoverinfo:"x+y+z",
+                colorscale: 'Viridis'
+            }
+        ],
+        dim = document.getElementById('a'+n+'Wrap').offsetWidth,
+        layout = {
+            title: (n==2) ? 'a2' : 'a4',
+            xaxis:{
+                title: 'mixing ratio 1'
+            },
+            yaxis:{
+                title: 'mixing ratio 2'
+            },
+            autosize: false,
+            width: dim,
+            height: dim
+        }
+
+
+    Plotly.newPlot('a'+n+'Plot', data, layout);
+}
+
 function recalculate_L(transition){
     // transition == 1 -> first transition; 2 -> second transition.
 
@@ -58,7 +89,6 @@ function recalculate_L(transition){
         momenta = ['l'+transition+'a', 'l'+transition+'b'],
         momenta_options = [document.getElementById('l'+transition+'a_value'), document.getElementById('l'+transition+'b_value')];
 
-    // l1 possibilities
     lMin = Math.abs(jFinal-jOrig);
     lMax = Math.abs(jFinal+jOrig);
     if (lMin==0){
@@ -124,7 +154,8 @@ function recalculate(){
         l2b = parseFloat($('input[name="l2b"]:checked').val()),
 
         d1 = parseFloat($('#mix1').val()),
-        d2 = parseFloat($('#mix2').val());
+        d2 = parseFloat($('#mix2').val()),
+        i, j, row;
 
     if (l1a==l1b){
         if (d1!=0){
@@ -155,7 +186,38 @@ function recalculate(){
     plot();
 
     document.getElementById('customAwarning').classList.add('hidden');
+
+    //2D a2 and a4 plots
+    //generate data
+    dataStore.a2 = [];
+    dataStore.a4 = [];
+    for(i=0; i<dataStore.steps; i++){
+        dataStore.a2[i] = []
+        dataStore.a4[i] = []
+        for(j=0; j<dataStore.steps; j++){
+            dataStore.a2[i][j] = dataStore.A2[i]*dataStore.B2[j];
+            dataStore.a4[i][j] = dataStore.A4[i]*dataStore.B4[j];
+        }
+    }
+    plot2D(2);
+    plot2D(4);
 };
+
+function plot_a(n){
+    //n: number; 2 or 4, corresponding to a2 or a4
+    //regenerate the plot for a2 or a4
+
+    var j1 = parseFloat(document.getElementById("j1").value),
+        j2 = parseFloat(document.getElementById("j2").value),
+        j3 = parseFloat(document.getElementById("j3").value),
+
+        l1a = parseFloat($('input[name="l1a"]:checked').val()),
+        l1b = parseFloat($('input[name="l1b"]:checked').val()),
+        l2a = parseFloat($('input[name="l2a"]:checked').val()),
+        l2b = parseFloat($('input[name="l2b"]:checked').val()),
+        i, j;
+
+}
 
 function calculate_a2(j1, j2, j3, l1a, l1b, l2a, l2b, delta1, delta2){
     return B(2,j2,j1,l1a,l1b,delta1)*A(2,j3,j2,l2a,l2b,delta2);
@@ -378,12 +440,58 @@ function F(k, jf, L1, L2, ji){
 };
 
 function A(k, ji, jf, L1, L2, delta){
-    return (1/(1+Math.pow(delta,2)))*(F(k,ji,L1,L1,jf)+2*delta*F(k,ji,L1,L2,jf)+delta*delta*F(k,ji,L2,L2,jf));
+    var f1 = F(k,ji,L1,L1,jf),
+        f2 = F(k,ji,L1,L2,jf),
+        f3 = F(k,ji,L2,L2,jf);
+
+    tabulateA(k, f1,f2,f3);
+
+    return (1/(1+Math.pow(delta,2)))*(f1+2*delta*f2+delta*delta*f3);
 };
 
+function tabulateA(k, f1, f2, f3){
+    //given precomputed values of F, reconstruct the table of A values for the currently selected momenta, across a range of mixing ratios.
+    var i, delta;
+
+    if(k==2)
+        dataStore.A2 = [];
+    else if(k==4)
+        dataStore.A4 = []
+    for(i=0; i<dataStore.steps; i++){
+        delta = -1 + 2*i/dataStore.steps;
+        if(k==2)
+            dataStore.A2.push( (1/(1+Math.pow(delta,2)))*(f1+2*delta*f2+delta*delta*f3) );
+        else if(k==4)
+            dataStore.A4.push( (1/(1+Math.pow(delta,2)))*(f1+2*delta*f2+delta*delta*f3) );
+    }
+}
+
 function B(k, ji, jf, L1, L2, delta){
-      return (1/(1+Math.pow(delta,2)))*(  F(k,jf,L1,L1,ji)+(Math.pow((-1),((L1+L2))))*2*delta*F(k,jf,L1,L2,ji)+delta*delta*F(k,jf,L2,L2,ji) );
+    var f1 = F(k,jf,L1,L1,ji),
+        f2 = F(k,jf,L1,L2,ji),
+        f3 = F(k,jf,L2,L2,ji)
+
+    tabulateB(k, f1,f2,f3,L1,L2);
+
+    return (1/(1+Math.pow(delta,2)))*(f1+(Math.pow((-1),((L1+L2))))*2*delta*f2+delta*delta*f3);
 };
+
+function tabulateB(k, f1, f2, f3, L1, L2){
+    //given precomputed values of F, reconstruct the table of B values for the currently selected momenta, across a range of mixing ratios.
+    var i, delta;
+
+    if(k==2)
+        dataStore.B2 = [];
+    else if(k==4)
+        dataStore.B4 = [];
+    for(i=0; i<dataStore.steps; i++){
+        delta = -1 + 2*i/dataStore.steps;
+        if(k==2)
+            dataStore.B2.push( (1/(1+Math.pow(delta,2)))*(f1+(Math.pow((-1),((L1+L2))))*2*delta*f2+delta*delta*f3) );
+        else if (k==4)
+            dataStore.B4.push( (1/(1+Math.pow(delta,2)))*(f1+(Math.pow((-1),((L1+L2))))*2*delta*f2+delta*delta*f3) );
+    }
+}
 
 function evenA(){
     

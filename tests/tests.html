@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Angular Correlation Calculator Testing</title>
+        <link rel="stylesheet" href="../css/qunit.css">
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+        <script src="../js/qunit.js"></script>
+        <script src='../js/angular_corr.js' type="text/javascript"></script>
+
+        <script>
+            //////////////////////////////////////////////////////
+            // 2d plot construction testing
+            //////////////////////////////////////////////////////
+
+            QUnit.module('a2/a4 plot construction', {
+                beforeEach: function(){
+                    dataStore = {
+                        cache: {
+                            factorial: [],
+                        },
+                        steps: 200 //number of bins in mixing ratio for a2 and a4 plots
+                    };
+                },
+
+                afterEach: function(){
+                    delete dataStore;
+                }
+            })
+
+            QUnit.test('A-tabulation', function(assert){
+                //check that the value of A reported in the array for plotting is consistent with that calculated for the UI.
+                var A2 = A(2,0,2,2,2,0);
+                var A4 = A(4,0,2,2,2,0)
+                var zero = 1 / (2/dataStore.steps)
+
+                assert.notEqual(dataStore.A2.indexOf(A2), -1, 'computed A2 not found anywhere in the list for plotting.')   
+                assert.equal(A2, dataStore.A2[zero], 'computed A2 not found in the expected location in the list for plotting')
+
+                assert.notEqual(dataStore.A4.indexOf(A4), -1, 'computed A4 not found anywhere in the list for plotting.')   
+                assert.equal(A4, dataStore.A4[zero], 'computed A4 not found in the expected location in the list for plotting')
+            });
+
+            QUnit.test('B-tabulation', function(assert){
+                //check that the value of A reported in the array for plotting is consistent with that calculated for the UI.
+                var B2 = B(2,0,2,2,2,0);
+                var B4 = B(4,0,2,2,2,0)
+                var zero = 1 / (2/dataStore.steps)
+
+                assert.notEqual(dataStore.B2.indexOf(B2), -1, 'computed B2 not found anywhere in the list for plotting.')   
+                assert.equal(B2, dataStore.B2[zero], 'computed B2 not found in the expected location in the list for plotting')
+
+                assert.notEqual(dataStore.B4.indexOf(B4), -1, 'computed B4 not found anywhere in the list for plotting.')   
+                assert.equal(B4, dataStore.B4[zero], 'computed B4 not found in the expected location in the list for plotting')
+            });
+
+            QUnit.test('tableConstruction', function(assert){
+                //check that the a2 and a4 values calculated in the sidebar appear correctly in the tables
+                var a2 = calculate_a2(4,2,0,2,3,2,2,0,0);
+                var a4 = calculate_a4(4,2,0,2,3,2,2,0,0);
+                var zero = 1 / (2/dataStore.steps)
+
+                assert.equal(a2, dataStore.A2[zero]*dataStore.B2[zero]);
+                assert.equal(a4, dataStore.A4[zero]*dataStore.B4[zero]);
+            });
+
+
+        </script>
+      </body>
+</html>

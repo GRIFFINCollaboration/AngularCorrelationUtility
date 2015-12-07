@@ -4,6 +4,7 @@
         <script src="js/jquery1-11-3.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="js/bootstrap3-3-5.min.js"></script>
+        <script src="js/plotly-latest.min.js"></script>
 
         <script type="text/javascript" src = "js/angular_corr.js"></script>
         <link rel="stylesheet" type="text/css" href="css/custom.css"/>
@@ -81,6 +82,15 @@
             </div>
         </div>
 
+        <div class='sectionWrapper'>
+            <div id='a2Wrap' class='col-md-6'>
+                <div id='a2Plot'></div>
+            </div>
+            <div id='a4Wrap' class='col-md-6'>
+                <div id='a4Plot'></div>
+            </div>
+        </div>
+
         <div class='sectionWrapper content references'>
             <div class='col-md-3'>
                 <img src='images/levelScheme.png'></img>
@@ -96,7 +106,8 @@
 
                 <h3>Software</h3>
                 <ul>
-                    <li>Figures: <a href='https://github.com/danvk/dygraphs/releases/tag/v1.1.1'>Dygraphs v1.1.1</a>, Dan Vanderkam</li>
+                    <li>W(&theta;) vs cos(&theta;) plot: <a href='https://github.com/danvk/dygraphs/releases/tag/v1.1.1'>Dygraphs v1.1.1</a>, Dan Vanderkam</li>
+                    <li>a2 and a4 plots: <a href='https://plot.ly/'>Plotly.js 1.1.1</a></li>
                     <li>CSS: <a href='http://getbootstrap.com/'>Twitter Bootstrap v3.3.5</a>, Twitter</li>
                 </ul>
             </div>
@@ -111,13 +122,23 @@
         </div>
 
         <script>
+            var i;
+
             //global datastore
             dataStore = {
                 cache: {
                     factorial: [],
-                    CG: {}
-                }
+                },
+                steps: 200 //number of bins in mixing ratio for a2 and a4 plots
             };
+
+            //set up x and y values for a2 and a4 plots
+            dataStore.x = [];
+            dataStore.y = [];
+            for(i=0; i<dataStore.steps; i++){
+                dataStore.x.push(-1 + 2*i/dataStore.steps);
+                dataStore.y.push(-1 + 2*i/dataStore.steps);
+            }
 
             //set up spin option dropdowns
             evenA();
