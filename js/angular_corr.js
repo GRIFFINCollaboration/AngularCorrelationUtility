@@ -55,7 +55,7 @@ function plot2D(n){
                 x: dataStore.x,
                 y: dataStore.y,
                 z: (n==2) ? dataStore.a2 : dataStore.a4,
-                type: 'contour',
+                type: 'heatmap',
                 name: (n==2) ? 'a2': 'a4', 
                 hoverinfo:"x+y+z",
                 colorscale: 'Viridis'
@@ -105,8 +105,14 @@ function plot_a(n, missingL1, missingL2){
             data.push( (n==2) ? dataStore.a2[i][zero] : dataStore.a4[i][zero] );
         }
     } else if(missingL2){
-        data = (n==2) ? dataStore.a2[zero] : dataStore.a4[zero]
+        data = (n==2) ? dataStore.a2[zero] : dataStore.a4[zero];
     }
+
+    //keep data around for the parametric plot
+    if(n==2)
+        dataStore.a2parametric = JSON.parse(JSON.stringify(data));
+    else if (n==4)
+        dataStore.a4parametric = JSON.parse(JSON.stringify(data));
 
     //construct the plotly data object
     data = [
@@ -120,6 +126,33 @@ function plot_a(n, missingL1, missingL2){
     ]
     
     Plotly.newPlot('a'+n+'Plot', data, layout);    
+}
+
+function plot_parametric_a(){
+    var dim = document.getElementById('a_parametric_Wrap').offsetWidth,
+        layout = {
+            autosize: false,
+            width: dim,
+            height: dim,
+            xaxis:{
+                title: 'a2'
+            },
+            yaxis:{
+                title: 'a4'
+            },
+            hovermode:'closest'
+        },
+        data = [
+            {
+                x: dataStore.a2parametric,
+                y: dataStore.a4parametric,
+                text: dataStore.mixingRatioLabels,
+                mode: 'markers',
+                type: 'scatter',
+            }
+        ]
+
+        Plotly.newPlot('aParametricPlot', data, layout); 
 }
 
 function recalculate_L(transition){
@@ -200,7 +233,9 @@ function recalculate(){
         d2 = parseFloat($('#mix2').val()),
         i, j, row,
         noL1mix = false, 
-        noL2mix = false;
+        noL2mix = false,
+        min = dataStore.minMix,
+        max = dataStore.maxMix;
 
     if (l1a==l1b){
         noL1mix = true;
@@ -236,6 +271,16 @@ function recalculate(){
 
     //a2 and a4 plots
     //generate data
+
+    dataStore.x = [];
+    dataStore.y = [];
+    dataStore.mixingRatioLabels = [];
+    for(i=0; i<dataStore.steps; i++){
+        dataStore.x.push(min + (max-min)*i/dataStore.steps);
+        dataStore.y.push(min + (max-min)*i/dataStore.steps);
+        dataStore.mixingRatioLabels.push('Mixing: ' + dataStore.x[i].toFixed(6));
+    }
+
     dataStore.a2 = [];
     dataStore.a4 = [];
     for(i=0; i<dataStore.steps; i++){
@@ -254,9 +299,11 @@ function recalculate(){
     else if(noL1mix || noL2mix){
         plot_a(2, noL1mix, noL2mix);
         plot_a(4, noL1mix, noL2mix);
+        plot_parametric_a();
     } else {
         plot2D(2);
         plot2D(4);
+        document.getElementById('aParametricPlot').innerHTML = '';
     }
 };
 
@@ -492,14 +539,16 @@ function A(k, ji, jf, L1, L2, delta){
 
 function tabulateA(k, f1, f2, f3){
     //given precomputed values of F, reconstruct the table of A values for the currently selected momenta, across a range of mixing ratios.
-    var i, delta;
+    var i, delta,
+        min = dataStore.minMix,
+        max = dataStore.maxMix;
 
     if(k==2)
         dataStore.A2 = [];
     else if(k==4)
         dataStore.A4 = []
     for(i=0; i<dataStore.steps; i++){
-        delta = -1 + 2*i/dataStore.steps;
+        delta = min + (max-min)*i/dataStore.steps;
         if(k==2)
             dataStore.A2.push( (1/(1+Math.pow(delta,2)))*(f1+2*delta*f2+delta*delta*f3) );
         else if(k==4)
@@ -519,14 +568,16 @@ function B(k, ji, jf, L1, L2, delta){
 
 function tabulateB(k, f1, f2, f3, L1, L2){
     //given precomputed values of F, reconstruct the table of B values for the currently selected momenta, across a range of mixing ratios.
-    var i, delta;
+    var i, delta,
+        min = dataStore.minMix,
+        max = dataStore.maxMix;
 
     if(k==2)
         dataStore.B2 = [];
     else if(k==4)
         dataStore.B4 = [];
     for(i=0; i<dataStore.steps; i++){
-        delta = -1 + 2*i/dataStore.steps;
+        delta = min + (max-min)*i/dataStore.steps;
         if(k==2)
             dataStore.B2.push( (1/(1+Math.pow(delta,2)))*(f1+(Math.pow((-1),((L1+L2))))*2*delta*f2+delta*delta*f3) );
         else if (k==4)
@@ -587,4 +638,17 @@ function syncElements(source, dest){
 
     var val = document.getElementById(source).value;
     document.getElementById(dest).value = val;
+}
+
+
+function updateMixingSamples(){
+    dataStore.steps = parseInt(document.getElementById('mixingSamples').value,10);
+    recalculate();
+}
+
+function updateMixLimits(){
+    dataStore.minMix = parseInt(document.getElementById('minMix').value,10);
+    dataStore.maxMix = parseInt(document.getElementById('maxMix').value,10);
+    recalculate();
+
 }

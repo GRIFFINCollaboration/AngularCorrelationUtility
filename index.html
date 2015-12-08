@@ -27,6 +27,7 @@
                 <form class='content' autocomplete='off'>
                     <!-- even / odd -->
                     <div>
+                        <h3>Angular Momentum Options</h3>
                         <input type="radio" id="even" name="r-group" data-toggle="button" onchange="evenA();recalculate_L(1);recalculate_L(2);recalculate();" checked>
                         <label class="button" for="even">Even mass</label>
                         <input type="radio" id="odd" name="r-group" data-toggle="button" onchange="oddA();recalculate_L(1);recalculate_L(2);recalculate();">
@@ -76,6 +77,22 @@
                     <div id='customAwarning' class='warning hidden'>
                         Warning: Custom values of a2 and a4 set, does not correspond to selected mixing ratios or momenta.
                     </div>
+
+                    <hr></hr>
+
+                    <div>
+                        <h3>a2/a4 Plot Options</h3>
+                        <label for='minMix' class='right inline'>Min. mixing: </label>
+                        <input type='number' id='minMix', step='0.1' value='-10' onchange='updateMixLimits()'></input>
+                    </div>
+                    <div>
+                        <label for='maxMix' class='right inline'>Max. mixing: </label>
+                        <input type='number' id='maxMix', step='0.1' value='10' onchange='updateMixLimits()'></input>
+                    </div>
+                    <div>
+                        <label for='mixSamples' class='right inline'>Mixing Samples: </label>
+                        <input type='number' id='mixingSamples', step='1' value='200' onchange='updateMixingSamples()'></input>
+                    </div>
                 </form>
 
                 <p id="error1"></p>
@@ -88,6 +105,12 @@
             </div>
             <div id='a4Wrap' class='col-md-6'>
                 <div id='a4Plot'></div>
+            </div>
+        </div>
+
+        <div class='sectionWrapper'>
+            <div id='a_parametric_Wrap' class='col-md-6'>
+                <div id='aParametricPlot'></div>
             </div>
         </div>
 
@@ -131,7 +154,9 @@
                 cache: {
                     factorial: [],
                 },
-                steps: 200 //number of bins in mixing ratio for a2 and a4 plots
+                steps: parseInt(document.getElementById('mixingSamples').value,10), //number of bins in mixing ratio for a2 and a4 plots
+                minMix: parseInt(document.getElementById('minMix').value,10),
+                maxMix: parseInt(document.getElementById('maxMix').value,10)
             };
 
             //set up x and y values for a2 and a4 plots
