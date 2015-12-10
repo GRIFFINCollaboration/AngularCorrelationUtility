@@ -2,7 +2,7 @@ Release History:
 
 version | DOI
 --------|------
-1.0.0   | 
+1.0.0   | [![DOI](https://zenodo.org/badge/3877/GRIFFINCollaboration/AngularCorrelationUtility.svg)](https://zenodo.org/badge/latestdoi/3877/GRIFFINCollaboration/AngularCorrelationUtility)
 
 # Angular Correlation Calculator
 
