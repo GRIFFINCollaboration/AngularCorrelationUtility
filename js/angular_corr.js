@@ -1,3 +1,6 @@
+//////////////////
+//plotting
+//////////////////
 function plot(setup){
     var graph = document.getElementById("graph_div"),
         width = 1000,
@@ -155,6 +158,10 @@ function plot_parametric_a(){
         Plotly.newPlot('aParametricPlot', data, layout); 
 }
 
+/////////////////////////////////
+//recalculation functions
+//////////////////////////////////
+
 function recalculate_L(transition){
     // transition == 1 -> first transition; 2 -> second transition.
 
@@ -307,6 +314,10 @@ function recalculate(){
     }
 };
 
+//////////////////
+// Physics
+//////////////////
+
 function calculate_a2(j1, j2, j3, l1a, l1b, l2a, l2b, delta1, delta2){
     return B(2,j2,j1,l1a,l1b,delta1)*A(2,j3,j2,l2a,l2b,delta2);
 };
@@ -314,25 +325,6 @@ function calculate_a2(j1, j2, j3, l1a, l1b, l2a, l2b, delta1, delta2){
 function calculate_a4(j1, j2, j3, l1a, l1b, l2a, l2b, delta1, delta2){
     return B(4,j2,j1,l1a,l1b,delta1)*A(4,j3,j2,l2a,l2b,delta2);
 };
-
-//------------------------------begin angular correlation functions--------------------//
-function Factorial(value){
-
-    var fac;
-
-    if(dataStore.cache.factorial[value]){
-        return dataStore.cache.factorial[value];
-    } else {
-        if(value > 1){
-            fac = value*Factorial(value-1);
-        } else {
-            fac = 1;
-        }
-        dataStore.cache.factorial[value] = fac;
-
-        return fac;
-    }
-}
 
 function ClebschGordan(j1, m1, j2, m2, j, m){
     var term, cg, term1, sum, k
@@ -628,8 +620,26 @@ function oddA(){
 };
 
 /////////////////
-// ui helpers
+// helpers
 /////////////////
+
+function Factorial(value){
+
+    var fac;
+
+    if(dataStore.cache.factorial[value]){
+        return dataStore.cache.factorial[value];
+    } else {
+        if(value > 1){
+            fac = value*Factorial(value-1);
+        } else {
+            fac = 1;
+        }
+        dataStore.cache.factorial[value] = fac;
+
+        return fac;
+    }
+}
 
 function syncElements(source, dest){
     //source: string; id of element to read value from
