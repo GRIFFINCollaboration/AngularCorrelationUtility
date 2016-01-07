@@ -61,7 +61,10 @@ function plot2D(n){
                 type: 'contour',
                 name: (n==2) ? 'a2': 'a4', 
                 hoverinfo:"x+y+z",
-                colorscale: 'Viridis'
+                colorscale: 'Viridis',
+                zaxis: {
+                	autorange: true
+                }
             }
         ],
         dim = document.getElementById('a'+n+'Wrap').offsetWidth,
