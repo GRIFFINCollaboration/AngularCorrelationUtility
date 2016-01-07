@@ -58,7 +58,7 @@ function plot2D(n){
                 x: dataStore.x,
                 y: dataStore.y,
                 z: (n==2) ? dataStore.a2 : dataStore.a4,
-                type: 'heatmap',
+                type: 'contour',
                 name: (n==2) ? 'a2': 'a4', 
                 hoverinfo:"x+y+z",
                 colorscale: 'Viridis'
