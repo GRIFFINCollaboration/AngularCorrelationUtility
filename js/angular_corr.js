@@ -393,7 +393,7 @@ function ClebschGordan(j1, m1, j2, m2, j, m){
             break
         else if( (j-j1-m2+k < 0) || (j-j2+m1+k < 0)  )
             //jump ahead to next term that will contribute
-            k = Math.max(Math.max(j-j1-m2, j-j2+m1) - 1, k);
+            k = Math.max(-Math.min(j-j1-m2, j-j2+m1) - 1, k);
         else{
             term = Factorial(j1+j2-j-k)*Factorial(j-j1-m2+k)*Factorial(j-j2+m1+k)*Factorial(j1-m1-k)*Factorial(j2+m2-k)*Factorial(k);
             if((k%2) == 1){
