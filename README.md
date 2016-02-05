@@ -2,6 +2,7 @@ Release History:
 
 version | DOI
 --------|------
+1.1.0   | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.45587.svg)](http://dx.doi.org/10.5281/zenodo.45587)
 1.0.0   | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.35172.svg)](http://dx.doi.org/10.5281/zenodo.35172)
 
 # Angular Correlation Calculator
