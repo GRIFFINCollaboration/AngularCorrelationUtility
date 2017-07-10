@@ -660,8 +660,8 @@ function updateMixingSamples(){
 }
 
 function updateMixLimits(){
-    dataStore.minMix = parseInt(document.getElementById('minMix').value,10);
-    dataStore.maxMix = parseInt(document.getElementById('maxMix').value,10);
+    dataStore.minMix = parseFloat(document.getElementById('minMix').value,10);
+    dataStore.maxMix = parseFloat(document.getElementById('maxMix').value,10);
     recalculate();
 
 }
