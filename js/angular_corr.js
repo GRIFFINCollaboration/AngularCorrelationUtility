@@ -81,7 +81,6 @@ function plot2D(n){
             height: dim
         }
 
-
     Plotly.newPlot('a'+n+'Plot', data, layout);
 }
 
@@ -101,19 +100,32 @@ function plot_a(n, missingL1, missingL2){
             yaxis:{
                 title: (n==2) ? 'a2' : 'a4'
             },
-        }, i,
-        zero = 1/(2/dataStore.steps)
-
-    //slice this 2D data along 0 for the missing mixing ratio 
-    if(missingL1){
-        data = [];
-        for(i=0; i<dataStore.steps; i++){
-            data.push( (n==2) ? dataStore.a2[i][zero] : dataStore.a4[i][zero] );
+        }, i, zero;
+    
+	// This calculation of the index for zero assumes the mixing limits are symmetric about zero, which they sometimes are not.
+	// Need to calculate the index for zero based on the present min, max and number of steps set.
+        // zero = 1/(2/dataStore.steps)
+        zero=0;
+        while(zero<=dataStore.steps){
+	    if((dataStore.minMix + (dataStore.maxMix-dataStore.minMix)*zero/dataStore.steps)==0){ break; }
+	    zero++;
         }
-    } else if(missingL2){
-        data = (n==2) ? dataStore.a2[zero] : dataStore.a4[zero];
+    if((dataStore.minMix + (dataStore.maxMix-dataStore.minMix)*zero/dataStore.steps)!=0){
+	// The mixing ratio limits do not overlap zero, so the zero case does not exist to project
+	// Need to calculate specifically the zero case
+        data = calculateUnmixedCase(n, missingL1, missingL2);
+    }else{
+	//slice this 2D data along 0 for the missing mixing ratio
+	if(missingL1){
+            data = [];
+            for(i=0; i<=dataStore.steps; i++){
+		data.push( (n==2) ? dataStore.a2[i][zero] : dataStore.a4[i][zero] );
+            }
+	} else if(missingL2){
+            data = (n==2) ? dataStore.a2[zero] : dataStore.a4[zero];
+	}
     }
-
+    
     //keep data around for the parametric plot
     if(n==2)
         dataStore.a2parametric = JSON.parse(JSON.stringify(data));
@@ -246,7 +258,7 @@ function recalculate(){
         noL2mix = false,
         min = dataStore.minMix,
         max = dataStore.maxMix;
-
+    
     if (l1a==l1b){
         noL1mix = true;
         if (d1!=0){
@@ -285,7 +297,7 @@ function recalculate(){
     dataStore.x = [];
     dataStore.y = [];
     dataStore.mixingRatioLabels = [];
-    for(i=0; i<dataStore.steps; i++){
+    for(i=0; i<=dataStore.steps; i++){
         dataStore.x.push(min + (max-min)*i/dataStore.steps);
         dataStore.y.push(min + (max-min)*i/dataStore.steps);
         dataStore.mixingRatioLabels.push('Mixing: ' + dataStore.x[i].toFixed(6));
@@ -293,10 +305,10 @@ function recalculate(){
 
     dataStore.a2 = [];
     dataStore.a4 = [];
-    for(i=0; i<dataStore.steps; i++){
+    for(i=0; i<=dataStore.steps; i++){
         dataStore.a2[i] = []
         dataStore.a4[i] = []
-        for(j=0; j<dataStore.steps; j++){
+        for(j=0; j<=dataStore.steps; j++){
             dataStore.a2[i][j] = dataStore.A2[i]*dataStore.B2[j];
             dataStore.a4[i][j] = dataStore.A4[i]*dataStore.B4[j];
         }
@@ -315,6 +327,120 @@ function recalculate(){
         plot2D(4);
         document.getElementById('aParametricPlot').innerHTML = '';
     }
+};
+
+function calculateUnmixedCase(n, missingL1, missingL2){
+
+    var data = [];
+    var j1 = parseFloat(document.getElementById("j1").value),
+        j2 = parseFloat(document.getElementById("j2").value),
+        j3 = parseFloat(document.getElementById("j3").value),
+
+        l1a = parseFloat($('input[name="l1a"]:checked').val()),
+        l1b = parseFloat($('input[name="l1b"]:checked').val()),
+        l2a = parseFloat($('input[name="l2a"]:checked').val()),
+        l2b = parseFloat($('input[name="l2b"]:checked').val()),
+
+        d1 = parseFloat($('#mix1').val()),
+        d2 = parseFloat($('#mix2').val()),
+        i, j, row, min, max;
+
+    // Save the user selections, set the global variables temporarily for the unmixed case
+    let userMin = dataStore.minMix;
+    let userMax = dataStore.maxMix;
+    let userSteps = dataStore.steps;
+    let userX = dataStore.x;
+    let userY = dataStore.y;
+    let userMixingRatioLabels = dataStore.mixingRatioLabels;
+    var userMinIndex, userMaxIndex;
+
+    // The new limits here need to be symmetric about zero, and the number of steps between the user limits needs to be the same.
+    if(userMin<0){
+	// both limits are negative. Now make them symmetric about zero
+	dataStore.maxMix = userMin*-1;
+    }else{
+	// both limits are positive. Now make them syymetric about zero
+	dataStore.minMix = userMax*-1;
+    }
+    min = dataStore.minMix;
+    max = dataStore.maxMix;
+
+    // The number of steps between the original limits needs to be the same, so the total number of steps will now be larger
+    dataStore.steps = Math.floor(((max-min)/(userMax-userMin))*dataStore.steps);
+    if(dataStore.steps%2 !=0){ dataStore.steps++; }
+    document.getElementById("a2").value = calculate_a2(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2);
+    document.getElementById("a4").value = calculate_a4(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2);
+    
+    //a2 and a4 plots
+    //generate data
+
+    dataStore.x = [];
+    dataStore.y = [];
+    dataStore.mixingRatioLabels = [];
+    for(i=0; i<=dataStore.steps; i++){
+        dataStore.x.push(min + (max-min)*i/dataStore.steps);
+        dataStore.y.push(min + (max-min)*i/dataStore.steps);
+        dataStore.mixingRatioLabels.push('Mixing: ' + dataStore.x[i].toFixed(6));
+	if((min + (max-min)*i/dataStore.steps)==userMin){
+	    userMinIndex = i;
+	}
+	if((min + (max-min)*i/dataStore.steps)==userMax){
+	    userMaxIndex = i;
+	}
+    }
+
+    if(userMaxIndex == undefined){
+	userMaxIndex = userMinIndex + userSteps;
+    }
+    if(userMinIndex == undefined){
+	userMinIndex = userMaxIndex - userSteps;
+    }
+
+    dataStore.a2 = [];
+    dataStore.a4 = [];
+    for(i=0; i<=dataStore.steps; i++){
+        dataStore.a2[i] = []
+        dataStore.a4[i] = []
+        for(j=0; j<=dataStore.steps; j++){
+	    dataStore.a2[i][j] = dataStore.A2[i]*dataStore.B2[j];
+	    dataStore.a4[i][j] = dataStore.A4[i]*dataStore.B4[j];
+        }
+    }
+
+    // Extract the data for the appropriate unmixed case
+    zero = 1/(2/dataStore.steps);
+    if(missingL1){
+        data = [];
+        for(i=userMinIndex; i<=userMaxIndex; i++){
+	    data.push( (n==2) ? dataStore.a2[i][zero] : dataStore.a4[i][zero] );
+        }
+    } else if(missingL2){
+        data = (n==2) ? dataStore.a2[zero].slice(userMinIndex, userMaxIndex) : dataStore.a4[zero].slice(userMinIndex, userMaxIndex);
+    }else{
+	console.log('Error: Problem with missingL1 '+missingL1+' and missingL2 '+missingL2+' in calculateUnmixedCase.');
+    }
+
+    // Reset global variables and recalculate the tabulated values
+    dataStore.minMix = userMin;
+    dataStore.maxMix = userMax;
+    dataStore.steps = userSteps;
+    dataStore.x = userX;
+    dataStore.y = userY;
+    dataStore.mixingRatioLabels = userMixingRatioLabels;
+    document.getElementById("a2").value = calculate_a2(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2);
+    document.getElementById("a4").value = calculate_a4(j1,j2,j3,l1a,l1b,l2a,l2b,d1,d2);
+    dataStore.a2 = [];
+    dataStore.a4 = [];
+    for(i=0; i<=dataStore.steps; i++){
+        dataStore.a2[i] = []
+        dataStore.a4[i] = []
+        for(j=0; j<=dataStore.steps; j++){
+	    dataStore.a2[i][j] = dataStore.A2[i]*dataStore.B2[j];
+	    dataStore.a4[i][j] = dataStore.A4[i]*dataStore.B4[j];
+        }
+    }
+    
+    return data;
 };
 
 //////////////////
@@ -542,7 +668,7 @@ function tabulateA(k, f1, f2, f3){
         dataStore.A2 = [];
     else if(k==4)
         dataStore.A4 = []
-    for(i=0; i<dataStore.steps; i++){
+    for(i=0; i<=dataStore.steps; i++){
         delta = min + (max-min)*i/dataStore.steps;
         if(k==2)
             dataStore.A2.push( (1/(1+Math.pow(delta,2)))*(f1+2*delta*f2+delta*delta*f3) );
@@ -571,7 +697,7 @@ function tabulateB(k, f1, f2, f3, L1, L2){
         dataStore.B2 = [];
     else if(k==4)
         dataStore.B4 = [];
-    for(i=0; i<dataStore.steps; i++){
+    for(i=0; i<=dataStore.steps; i++){
         delta = min + (max-min)*i/dataStore.steps;
         if(k==2)
             dataStore.B2.push( (1/(1+Math.pow(delta,2)))*(f1+(Math.pow((-1),((L1+L2))))*2*delta*f2+delta*delta*f3) );
